@@ -26,58 +26,42 @@
 #include "services/gatt/ble_svc_gatt.h"
 #include "blehr_sens.h"
 
-static const char *manuf_name = "Apache Mynewt ESP32 devkitC";
-static const char *model_num = "Mynewt HR Sensor demo";
+static const char *manuf_name = "Thomas Hinds";
+static const char *model_num = "T1";
 uint16_t hrs_hrm_handle;
 
 static int
-gatt_svr_chr_access_heart_rate(uint16_t conn_handle, uint16_t attr_handle,
+gatt_svr_chr_access_cycling_power(uint16_t conn_handle, uint16_t attr_handle,
                                struct ble_gatt_access_ctxt *ctxt, void *arg);
-
+                               
 static int
 gatt_svr_chr_access_device_info(uint16_t conn_handle, uint16_t attr_handle,
                                 struct ble_gatt_access_ctxt *ctxt, void *arg);
 
 static const struct ble_gatt_svc_def gatt_svr_svcs[] = {
     {
-        /* Service: Heart-rate */
+        /* Service: Cycling Power */
         .type = BLE_GATT_SVC_TYPE_PRIMARY,
-        .uuid = BLE_UUID16_DECLARE(GATT_HRS_UUID),
+        .uuid = BLE_UUID16_DECLARE(GATT_CPS_UUID),
         .characteristics = (struct ble_gatt_chr_def[])
         { {
-                /* Characteristic: Heart-rate measurement */
-                .uuid = BLE_UUID16_DECLARE(GATT_HRS_MEASUREMENT_UUID),
-                .access_cb = gatt_svr_chr_access_heart_rate,
+                /* Characteristic: Cycling Power measurement */
+                .uuid = BLE_UUID16_DECLARE(GATT_CPS_MEASUREMENT_UUID),
+                .access_cb = gatt_svr_chr_access_cycling_power,
                 .val_handle = &hrs_hrm_handle,
                 .flags = BLE_GATT_CHR_F_NOTIFY,
             }, {
-                /* Characteristic: Body sensor location */
-                .uuid = BLE_UUID16_DECLARE(GATT_HRS_BODY_SENSOR_LOC_UUID),
-                .access_cb = gatt_svr_chr_access_heart_rate,
+                /* Characteristic: Sensor location */
+                .uuid = BLE_UUID16_DECLARE(GATT_CPS_SENSOR_LOC_UUID),
+                .access_cb = gatt_svr_chr_access_cycling_power,
                 .flags = BLE_GATT_CHR_F_READ,
-            }, {
-                0, /* No more characteristics in this service */
-            },
-        }
-    },
-
-    {
-        /* Service: Heart-rate */
-        .type = BLE_GATT_SVC_TYPE_PRIMARY,
-        .uuid = BLE_UUID16_DECLARE(GATT_HRS_UUID),
-        .characteristics = (struct ble_gatt_chr_def[])
-        { {
-                /* Characteristic: Heart-rate measurement */
-                .uuid = BLE_UUID16_DECLARE(GATT_HRS_MEASUREMENT_UUID),
-                .access_cb = gatt_svr_chr_access_heart_rate,
-                .val_handle = &hrs_hrm_handle,
-                .flags = BLE_GATT_CHR_F_NOTIFY,
-            }, {
-                /* Characteristic: Body sensor location */
-                .uuid = BLE_UUID16_DECLARE(GATT_HRS_BODY_SENSOR_LOC_UUID),
-                .access_cb = gatt_svr_chr_access_heart_rate,
+            }, 
+            {
+                /* Characteristic: Cycling Power Feature */
+                .uuid = BLE_UUID16_DECLARE(GATT_CPS_FEATURE_UUID),
+                .access_cb = gatt_svr_chr_access_cycling_power,
                 .flags = BLE_GATT_CHR_F_READ,
-            }, {
+            },{
                 0, /* No more characteristics in this service */
             },
         }
@@ -110,20 +94,28 @@ static const struct ble_gatt_svc_def gatt_svr_svcs[] = {
 };
 
 static int
-gatt_svr_chr_access_heart_rate(uint16_t conn_handle, uint16_t attr_handle,
+gatt_svr_chr_access_cycling_power(uint16_t conn_handle, uint16_t attr_handle,
                                struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
-    /* Sensor location, set to "Chest" */
-    static uint8_t body_sens_loc = 0x01;
+    /* Sensor location, set to "Front Wheel" */
     uint16_t uuid;
     int rc;
 
     uuid = ble_uuid_u16(ctxt->chr->uuid);
 
-    if (uuid == GATT_HRS_BODY_SENSOR_LOC_UUID) {
-        rc = os_mbuf_append(ctxt->om, &body_sens_loc, sizeof(body_sens_loc));
+    if (uuid == GATT_CPS_SENSOR_LOC_UUID) {
+        
+        static uint8_t sens_loc = 0x04;
+        rc = os_mbuf_append(ctxt->om, &sens_loc, sizeof(sens_loc));
 
         return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
+    }
+    else if (uuid == GATT_CPS_FEATURE_UUID) {
+
+        static uint32_t features = 0x0000; // No additional features supported
+        rc = os_mbuf_append(ctxt->om, &features, sizeof(features));
+        return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
+
     }
 
     assert(0);

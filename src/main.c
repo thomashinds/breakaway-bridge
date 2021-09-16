@@ -32,20 +32,20 @@
 
 static const char *tag = "NimBLE_BLE_HeartRate";
 
-static xTimerHandle blehr_tx_timer;
+static xTimerHandle notify_power_timer;
 
 static bool notify_state;
 
 static uint16_t conn_handle;
 
-static const char *device_name = "blehr_sensor_1.0";
+static const char *device_name = "ESPelotool";
 
 static int blehr_gap_event(struct ble_gap_event *event, void *arg);
 
 static uint8_t blehr_addr_type;
 
 /* Variable to simulate heart beats */
-static uint8_t heartrate = 90;
+static uint8_t power_watts = 90;
 
 /**
  * Utility function to log an array of bytes.
@@ -129,18 +129,18 @@ blehr_advertise(void)
 }
 
 static void
-blehr_tx_hrate_stop(void)
+notify_power_stop(void)
 {
-    xTimerStop( blehr_tx_timer, 1000 / portTICK_PERIOD_MS );
+    xTimerStop( notify_power_timer, 1000 / portTICK_PERIOD_MS );
 }
 
 /* Reset heart rate measurement */
 static void
-blehr_tx_hrate_reset(void)
+notify_power_reset(void)
 {
     int rc;
 
-    if (xTimerReset(blehr_tx_timer, 1000 / portTICK_PERIOD_MS ) == pdPASS) {
+    if (xTimerReset(notify_power_timer, 1000 / portTICK_PERIOD_MS ) == pdPASS) {
         rc = 0;
     } else {
         rc = 1;
@@ -152,33 +152,33 @@ blehr_tx_hrate_reset(void)
 
 /* This function simulates heart beat and notifies it to the client */
 static void
-blehr_tx_hrate(xTimerHandle ev)
+notify_power(xTimerHandle ev)
 {
-    static uint8_t hrm[2];
+    static uint8_t payload[2];
     int rc;
     struct os_mbuf *om;
 
     if (!notify_state) {
-        blehr_tx_hrate_stop();
-        heartrate = 90;
+        notify_power_stop();
+        power_watts = 90;
         return;
     }
 
-    hrm[0] = 0x06; /* contact of a sensor */
-    hrm[1] = heartrate; /* storing dummy data */
+    payload[0] = 0x00; /* No additional fields present */
+    payload[1] = power_watts; /* Power data */
 
-    /* Simulation of heart beats */
-    heartrate++;
-    if (heartrate == 160) {
-        heartrate = 90;
+    /* Simulation of power */
+    power_watts++;
+    if (power_watts == 160) {
+        power_watts = 90;
     }
 
-    om = ble_hs_mbuf_from_flat(hrm, sizeof(hrm));
+    om = ble_hs_mbuf_from_flat(payload, sizeof(payload));
     rc = ble_gattc_notify_custom(conn_handle, hrs_hrm_handle, om);
 
     assert(rc == 0);
 
-    blehr_tx_hrate_reset();
+    notify_power_reset();
 }
 
 static int
@@ -216,10 +216,10 @@ blehr_gap_event(struct ble_gap_event *event, void *arg)
                     event->subscribe.cur_notify, hrs_hrm_handle);
         if (event->subscribe.attr_handle == hrs_hrm_handle) {
             notify_state = event->subscribe.cur_notify;
-            blehr_tx_hrate_reset();
+            notify_power_reset();
         } else if (event->subscribe.attr_handle != hrs_hrm_handle) {
             notify_state = event->subscribe.cur_notify;
-            blehr_tx_hrate_stop();
+            notify_power_stop();
         }
         ESP_LOGI("BLE_GAP_SUBSCRIBE_EVENT", "conn_handle from subscribe=%d", conn_handle);
         break;
@@ -289,7 +289,7 @@ void app_main(void)
     ble_hs_cfg.reset_cb = blehr_on_reset;
 
     /* name, period/time,  auto reload, timer ID, callback */
-    blehr_tx_timer = xTimerCreate("blehr_tx_timer", pdMS_TO_TICKS(1000), pdTRUE, (void *)0, blehr_tx_hrate);
+    notify_power_timer = xTimerCreate("notify_power_timer", pdMS_TO_TICKS(1000), pdTRUE, (void *)0, notify_power);
 
     rc = gatt_svr_init();
     assert(rc == 0);
