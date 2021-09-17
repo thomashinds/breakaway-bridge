@@ -30,7 +30,7 @@
 #include "services/gap/ble_svc_gap.h"
 #include "blehr_sens.h"
 
-static const char *tag = "NimBLE_BLE_HeartRate";
+static const char *tag = "ESPelotool";
 
 static xTimerHandle notify_power_timer;
 
@@ -44,8 +44,8 @@ static int blehr_gap_event(struct ble_gap_event *event, void *arg);
 
 static uint8_t blehr_addr_type;
 
-/* Variable to simulate heart beats */
-static uint8_t power_watts = 90;
+// The power in watts to transmit
+static uint16_t power_watts = 0;
 
 /**
  * Utility function to log an array of bytes.
@@ -110,6 +110,12 @@ blehr_advertise(void)
     fields.name_len = strlen(device_name);
     fields.name_is_complete = 1;
 
+    fields.num_uuids16 = 2;
+    
+    ble_uuid16_t service_uuids[2] = {BLE_UUID16_INIT(GATT_DEVICE_INFO_UUID), BLE_UUID16_INIT(GATT_CPS_UUID)};
+
+    fields.uuids16 = service_uuids;
+
     rc = ble_gap_adv_set_fields(&fields);
     if (rc != 0) {
         MODLOG_DFLT(ERROR, "error setting advertisement data; rc=%d\n", rc);
@@ -150,27 +156,31 @@ notify_power_reset(void)
 
 }
 
-/* This function simulates heart beat and notifies it to the client */
+/* This function simulates power and notifies it to the client */
 static void
 notify_power(xTimerHandle ev)
 {
-    static uint8_t payload[2];
+    ESP_LOGI(tag, "notifying power");
+    static uint16_t payload[2];
     int rc;
     struct os_mbuf *om;
 
     if (!notify_state) {
         notify_power_stop();
-        power_watts = 90;
         return;
     }
 
-    payload[0] = 0x00; /* No additional fields present */
+    payload[0] = 0x0000; /* No additional fields present */
     payload[1] = power_watts; /* Power data */
 
     /* Simulation of power */
-    power_watts++;
-    if (power_watts == 160) {
-        power_watts = 90;
+    if (power_watts != 100) {
+        ESP_LOGI(tag, "setting power to 100");
+        power_watts = 100;
+    }
+    else {
+        ESP_LOGI(tag, "setting power to 200");
+        power_watts = 200;
     }
 
     om = ble_hs_mbuf_from_flat(payload, sizeof(payload));
