@@ -17,8 +17,10 @@
  * under the License.
  */
 
+#include "driver/uart.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
+
 #include "freertos/FreeRTOSConfig.h"
 /* BLE */
 #include "esp_nimble_hci.h"
@@ -32,7 +34,7 @@
 
 static const char *tag = "ESPelotool";
 
-static xTimerHandle notify_power_timer;
+// static xTimerHandle notify_power_timer;
 
 static bool notify_state;
 
@@ -44,8 +46,6 @@ static int blehr_gap_event(struct ble_gap_event *event, void *arg);
 
 static uint8_t blehr_addr_type;
 
-// The power in watts to transmit
-static uint16_t power_watts = 0;
 
 /**
  * Utility function to log an array of bytes.
@@ -134,31 +134,31 @@ blehr_advertise(void)
     }
 }
 
-static void
-notify_power_stop(void)
-{
-    xTimerStop( notify_power_timer, 1000 / portTICK_PERIOD_MS );
-}
+// static void
+// notify_power_stop(void)
+// {
+//     xTimerStop( notify_power_timer, 1000 / portTICK_PERIOD_MS );
+// }
 
 /* Reset heart rate measurement */
-static void
-notify_power_reset(void)
-{
-    int rc;
+// static void
+// notify_power_reset(void)
+// {
+//     int rc;
 
-    if (xTimerReset(notify_power_timer, 1000 / portTICK_PERIOD_MS ) == pdPASS) {
-        rc = 0;
-    } else {
-        rc = 1;
-    }
+//     if (xTimerReset(notify_power_timer, 1000 / portTICK_PERIOD_MS ) == pdPASS) {
+//         rc = 0;
+//     } else {
+//         rc = 1;
+//     }
 
-    assert(rc == 0);
+//     assert(rc == 0);
 
-}
+// }
 
 /* This function simulates power and notifies it to the client */
 static void
-notify_power(xTimerHandle ev)
+notify_power(int power_watts /* xTimerHandle ev */)
 {
     ESP_LOGI(tag, "notifying power");
     static uint16_t payload[2];
@@ -166,7 +166,7 @@ notify_power(xTimerHandle ev)
     struct os_mbuf *om;
 
     if (!notify_state) {
-        notify_power_stop();
+        // notify_power_stop();
         return;
     }
 
@@ -174,21 +174,21 @@ notify_power(xTimerHandle ev)
     payload[1] = power_watts; /* Power data */
 
     /* Simulation of power */
-    if (power_watts != 100) {
-        ESP_LOGI(tag, "setting power to 100");
-        power_watts = 100;
-    }
-    else {
-        ESP_LOGI(tag, "setting power to 200");
-        power_watts = 200;
-    }
+    // if (power_watts != 100) {
+    //     ESP_LOGI(tag, "setting power to 100");
+    //     power_watts = 100;
+    // }
+    // else {
+    //     ESP_LOGI(tag, "setting power to 200");
+    //     power_watts = 200;
+    // }
 
     om = ble_hs_mbuf_from_flat(payload, sizeof(payload));
     rc = ble_gattc_notify_custom(conn_handle, hrs_hrm_handle, om);
 
     assert(rc == 0);
 
-    notify_power_reset();
+    // notify_power_reset();
 }
 
 static int
@@ -226,10 +226,10 @@ blehr_gap_event(struct ble_gap_event *event, void *arg)
                     event->subscribe.cur_notify, hrs_hrm_handle);
         if (event->subscribe.attr_handle == hrs_hrm_handle) {
             notify_state = event->subscribe.cur_notify;
-            notify_power_reset();
+            // notify_power_reset();
         } else if (event->subscribe.attr_handle != hrs_hrm_handle) {
             notify_state = event->subscribe.cur_notify;
-            notify_power_stop();
+            // notify_power_stop();
         }
         ESP_LOGI("BLE_GAP_SUBSCRIBE_EVENT", "conn_handle from subscribe=%d", conn_handle);
         break;
@@ -279,6 +279,63 @@ void blehr_host_task(void *param)
     nimble_port_freertos_deinit();
 }
 
+void uart_stuff() {
+    /* Configure parameters of an UART driver,
+     * communication pins and install the driver */
+    uart_config_t uart_config = {
+        .baud_rate = 19200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity    = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_APB,
+    };
+    int intr_alloc_flags = 0;
+
+#if CONFIG_UART_ISR_IN_IRAM
+    intr_alloc_flags = ESP_INTR_FLAG_IRAM;
+#endif
+
+    ESP_ERROR_CHECK(uart_driver_install(2 /* port */, 1024 * 2, 0, 0, NULL, intr_alloc_flags));
+    ESP_ERROR_CHECK(uart_param_config(2 /* port */, &uart_config));
+    ESP_ERROR_CHECK(uart_set_pin(2 /* port */, 12, 13, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
+
+    // Configure a temporary buffer for the incoming data
+    uint8_t *data = (uint8_t *) malloc(1024);
+
+    while (1) {
+        // Read data from the UART
+        int len = uart_read_bytes(2, data, 1024, 20 / portTICK_RATE_MS);
+        if (len > 0) {
+            uint8_t dir = data[0];
+            uint8_t metric = data[1];
+            uint8_t payload_len = data[2];
+
+            // ESP_LOGI("", "dir: %x, metric: %x, len: %x\n", dir, metric, payload_len);
+
+            if (dir == 0xF1 && metric == 0x44) {
+                assert(payload_len == 5);
+                assert(len == 10);
+
+                int power_deciwatts = 0;
+                int power_10 = 1;
+                for (int place = 0; place < 5; place++) {
+
+                    power_deciwatts += power_10 * (data[3 + place] - (int) '0');
+
+                    power_10 *= 10;
+                }
+
+                ESP_LOGI("", "power: %d deciwatts\n", power_deciwatts);
+                notify_power(power_deciwatts / 10);
+            }
+
+        }
+        // Write data back to the UART
+        // ESP_LOGI(tag, "uart: %d\n", len);
+    }
+}
+
 void app_main(void)
 {
     int rc;
@@ -299,7 +356,7 @@ void app_main(void)
     ble_hs_cfg.reset_cb = blehr_on_reset;
 
     /* name, period/time,  auto reload, timer ID, callback */
-    notify_power_timer = xTimerCreate("notify_power_timer", pdMS_TO_TICKS(1000), pdTRUE, (void *)0, notify_power);
+    // notify_power_timer = xTimerCreate("notify_power_timer", pdMS_TO_TICKS(1000), pdTRUE, (void *)0, notify_power);
 
     rc = gatt_svr_init();
     assert(rc == 0);
@@ -311,4 +368,5 @@ void app_main(void)
     /* Start the task */
     nimble_port_freertos_init(blehr_host_task);
 
+    uart_stuff();
 }
