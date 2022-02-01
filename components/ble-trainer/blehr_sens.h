@@ -20,21 +20,21 @@
 #ifndef H_BLEHR_SENSOR_
 #define H_BLEHR_SENSOR_
 
-#include "nimble/ble.h"
 #include "modlog/modlog.h"
+#include "nimble/ble.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // Device Info
-#define GATT_DEVICE_INFO_UUID                   0x180A
-#define GATT_MANUFACTURER_NAME_UUID             0x2A29
-#define GATT_MODEL_NUMBER_UUID                  0x2A24
+#define GATT_DEVICE_INFO_UUID 0x180A
+#define GATT_MANUFACTURER_NAME_UUID 0x2A29
+#define GATT_MODEL_NUMBER_UUID 0x2A24
 
 // Cycling Power Service
-#define GATT_CPS_UUID   0x1818
-#define GATT_CPS_MEASUREMENT_UUID   0x2A63
+#define GATT_CPS_UUID 0x1818
+#define GATT_CPS_MEASUREMENT_UUID 0x2A63
 #define GATT_CPS_FEATURE_UUID 0x2A65
 #define GATT_CPS_SENSOR_LOC_UUID 0x2A5D
 

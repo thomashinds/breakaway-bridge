@@ -17,11 +17,9 @@
  * under the License.
  */
 
+#include "ble-trainer.h"
 #include "driver/uart.h"
 #include "esp_log.h"
-
-#include "ble-trainer.h"
-
 
 void uart_stuff() {
     /* Configure parameters of an UART driver,
@@ -29,20 +27,19 @@ void uart_stuff() {
     uart_config_t uart_config = {
         .baud_rate = 19200,
         .data_bits = UART_DATA_8_BITS,
-        .parity    = UART_PARITY_DISABLE,
+        .parity = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
         .source_clk = UART_SCLK_APB,
     };
     int intr_alloc_flags = 0;
 
-
     ESP_ERROR_CHECK(uart_driver_install(2 /* port */, 1024 * 2, 256, 0, NULL, intr_alloc_flags));
     ESP_ERROR_CHECK(uart_param_config(2 /* port */, &uart_config));
     ESP_ERROR_CHECK(uart_set_pin(2 /* port */, 14, 13, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
 
     // Configure a temporary buffer for the incoming data
-    uint8_t *data = (uint8_t *) malloc(1024);
+    uint8_t *data = (uint8_t *)malloc(1024);
 
     uint8_t init[4] = {0xFE, 0x00, 0xFE, 0xF6};
     uint8_t get_power[4] = {0xF5, 0x44, 0x39, 0xF6};
@@ -66,8 +63,7 @@ void uart_stuff() {
                 int power_deciwatts = 0;
                 int power_10 = 1;
                 for (int place = 0; place < 5; place++) {
-
-                    power_deciwatts += power_10 * (data[3 + place] - (int) '0');
+                    power_deciwatts += power_10 * (data[3 + place] - (int)'0');
 
                     power_10 *= 10;
                 }
@@ -82,8 +78,7 @@ void uart_stuff() {
     }
 }
 
-void app_main(void)
-{
+void app_main(void) {
     ble_init();
 
     uart_stuff();
