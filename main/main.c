@@ -292,18 +292,20 @@ void uart_stuff() {
     };
     int intr_alloc_flags = 0;
 
-#if CONFIG_UART_ISR_IN_IRAM
-    intr_alloc_flags = ESP_INTR_FLAG_IRAM;
-#endif
 
-    ESP_ERROR_CHECK(uart_driver_install(2 /* port */, 1024 * 2, 0, 0, NULL, intr_alloc_flags));
+    ESP_ERROR_CHECK(uart_driver_install(2 /* port */, 1024 * 2, 256, 0, NULL, intr_alloc_flags));
     ESP_ERROR_CHECK(uart_param_config(2 /* port */, &uart_config));
-    ESP_ERROR_CHECK(uart_set_pin(2 /* port */, 12, 13, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
+    ESP_ERROR_CHECK(uart_set_pin(2 /* port */, 14, 13, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
 
     // Configure a temporary buffer for the incoming data
     uint8_t *data = (uint8_t *) malloc(1024);
 
+    uint8_t init[4] = {0xFE, 0x00, 0xFE, 0xF6};
+    uint8_t get_power[4] = {0xF5, 0x44, 0x39, 0xF6};
+
     while (1) {
+        int wlen = uart_write_bytes(2, get_power, 4);
+
         // Read data from the UART
         int len = uart_read_bytes(2, data, 1024, 20 / portTICK_RATE_MS);
         if (len > 0) {
@@ -329,7 +331,7 @@ void uart_stuff() {
                 ESP_LOGI("", "power: %d deciwatts\n", power_deciwatts);
                 notify_power(power_deciwatts / 10);
             }
-
+            vTaskDelay(pdMS_TO_TICKS(100));
         }
         // Write data back to the UART
         // ESP_LOGI(tag, "uart: %d\n", len);
