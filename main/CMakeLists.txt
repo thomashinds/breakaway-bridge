@@ -1,3 +1,3 @@
-idf_component_register(SRCS "main.c" "gatt_svr.c"
+idf_component_register(SRCS "main.c"
                     INCLUDE_DIRS "."
-                    REQUIRES bt)
+                    REQUIRES ble-trainer)
