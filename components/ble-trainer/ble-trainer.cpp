@@ -23,8 +23,8 @@ BLETrainer::BLETrainer()
 
       cps_measurement_characteristic{nullptr},
       cps_measurement_callbacks{CPSMeasurementCallbacks(*this)} {
-    xTaskCreateStatic(this->Task, "BLETrainer", this->STACK_SIZE, this, tskIDLE_PRIORITY + 5,
-                      this->task_stack, &this->task_storage);
+    // xTaskCreateStatic(this->Task, "BLETrainer", this->STACK_SIZE, this, tskIDLE_PRIORITY + 5,
+    //                   this->task_stack, &this->task_storage);
 }
 
 void BLETrainer::Init() {
@@ -70,15 +70,15 @@ void BLETrainer::notify_power(const uint16_t power_watts) {
     this->cps_measurement_characteristic->notify();
 }
 
-void BLETrainer::Task(void* context) {
-    if (context != nullptr) {
-        BLETrainer* ble_trainer = reinterpret_cast<BLETrainer*>(context);
+// void BLETrainer::Task(void* context) {
+//     if (context != nullptr) {
+//         BLETrainer* ble_trainer = reinterpret_cast<BLETrainer*>(context);
 
-        while (true) {
-            // event_handler->HandleEvents();
-            vTaskDelay(pdMS_TO_TICKS(20));
-        }
+//         while (true) {
+//             // event_handler->HandleEvents();
+//             vTaskDelay(pdMS_TO_TICKS(20));
+//         }
 
-    }
-    // Shouldn't get here
-}
+//     }
+//     // Shouldn't get here
+// }
