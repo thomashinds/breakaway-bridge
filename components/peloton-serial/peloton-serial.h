@@ -3,7 +3,6 @@
 
 #include "event-handler.h"
 #include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 
 class PelotonSerial {
    public:
