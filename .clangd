@@ -1,2 +1,16 @@
 CompileFlags:
-  Add: -m
+  Remove:
+    [
+      -fno-tree-switch-conversion,
+      -mlongcalls,
+      -fstrict-volatile-bitfields,
+    ]
+  Add: [
+    "--sysroot=/Users/thomas/.espressif/tools/xtensa-esp32-elf/esp-2022r1-11.2.0"
+  ]
+
+Diagnostics:
+  UnusedIncludes: Strict
+  ClangTidy:
+    Add: [bugprone*, misc*, modernize*, performance*, readability*]
+    Remove: [modernize-use-trailing-return-type, readability-magic-numbers]

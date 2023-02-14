@@ -1,51 +1,53 @@
 #ifndef BLE_TRAINER_H
 #define BLE_TRAINER_H
 
-#include "NimBLEDevice.h"
-
-// Forward declaration
-class BLETrainer;
-
-class CPSMeasurementCallbacks : public NimBLECharacteristicCallbacks {
-   public:
-    CPSMeasurementCallbacks(BLETrainer& ble_trainer) : ble_trainer{ble_trainer} {}
-
-    void onSubscribe(NimBLECharacteristic* pCharacteristic, ble_gap_conn_desc* desc,
-                     uint16_t subValue) override {
-        if (subValue == 1 || subValue == 3) {
-            // Subscribed todo make this actually change something
-        } else if (subValue == 0) {
-            // Unsubscribed
-        }
-    }
-
-   private:
-   BLETrainer& ble_trainer;
-};
+#include "NimBLECharacteristic.h"
+#include "NimBLEServer.h"
+#include "NimBLEService.h"
 
 class BLETrainer {
-   public:
-    BLETrainer();
-    void Init();
-    void notify_power(uint16_t power_watts);
+ public:
+  BLETrainer();
+  void Init();
+  void notify_power(int16_t power_watts);
+  void notify_cadence(uint16_t cadence_rpm);
 
-   private:
-    StaticTask_t task_storage;
-    static constexpr size_t STACK_SIZE{1024};
-    StackType_t task_stack[STACK_SIZE];
+ private:
+  StaticTask_t task_storage;
+  static constexpr size_t STACK_SIZE{1024};
+  StackType_t task_stack[STACK_SIZE];
 
-    bool notify_enable;
+  NimBLEServer *gatt_server;
 
-    NimBLEServer* pServer;
+  // Device info
+  NimBLEService *device_info_service;
+  NimBLECharacteristic *di_manufacturer_name_characteristic;
+  NimBLECharacteristic *di_model_number_characteristic;
+  NimBLECharacteristic *di_serial_number_characteristic;
+  NimBLECharacteristic *di_hardware_revision_characteristic;
+  NimBLECharacteristic *di_firmware_revision_characteristic;
 
-    NimBLECharacteristic* cps_feature_characteristic;
-    NimBLECharacteristic* cps_sensor_location_characteristic;
-    NimBLECharacteristic* cps_measurement_characteristic;
+  // Cycling Power
+  NimBLEService *cps_service;
+  NimBLECharacteristic *cps_feature_characteristic;
+  NimBLECharacteristic *cps_sensor_location_characteristic;
+  NimBLECharacteristic *cps_measurement_characteristic;
 
-    CPSMeasurementCallbacks cps_measurement_callbacks;
+  // Cycling Speed and Cadence
+  NimBLEService *csc_service;
+  NimBLECharacteristic *csc_characteristic_measurement;
+  NimBLECharacteristic *csc_characteristic_feature;
 
-    static void Task(void*);
+  // Adapter state data
+  uint16_t stored_crank_revolutions;
+  uint16_t stored_crank_event_time;
 
+  uint32_t stored_wheel_revolutions;
+  uint16_t stored_wheel_event_time;
+
+  // CPSMeasurementCallbacks cps_measurement_callbacks;
+
+  static void Task(void *);
 };
 
 #endif

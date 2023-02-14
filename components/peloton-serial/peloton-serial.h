@@ -7,30 +7,38 @@
 #include "freertos/FreeRTOS.h"
 
 class PelotonSerial {
-   public:
-    PelotonSerial(EventHandler& event_handler);
-    void Init();
+ public:
+  PelotonSerial(EventHandler const& event_handler);
 
-   private:
-    StaticTask_t tx_task_storage;
-    static constexpr size_t TX_STACK_SIZE{4096};  // todo shrink once ble moves
-    StackType_t tx_task_stack[TX_STACK_SIZE];
+ private:
+  using Query = std::array<uint8_t, 4>;
 
-    StaticTask_t rx_task_storage;
-    static constexpr size_t RX_STACK_SIZE{4096};  // todo shrink once ble moves
-    StackType_t rx_task_stack[RX_STACK_SIZE];
+  bool is_calibrated;
 
-    static constexpr size_t PACKET_LENGTH{10};
+  StaticTask_t tx_task_storage;
+  static constexpr size_t TX_STACK_SIZE{4096};  // todo shrink once ble moves
+  std::array<StackType_t, TX_STACK_SIZE> tx_task_stack{};
 
-    EventHandler& event_handler;
+  StaticTask_t rx_task_storage;
+  static constexpr size_t RX_STACK_SIZE{4096};  // todo shrink once ble moves
+  std::array<StackType_t, RX_STACK_SIZE> rx_task_stack{};
 
-    std::optional<Event> ExtractData(std::array<uint8_t, PACKET_LENGTH> raw_packet);
+  static constexpr size_t PACKET_LENGTH{10};
 
-    void TxTask();
-    void RxTask();
+  static constexpr uint8_t NUM_CAL_ENTRIES = 31;
+  std::array<uint16_t, NUM_CAL_ENTRIES> resistance_cal_table{};
 
-    static void TxTaskWrapper(void* context);
-    static void RxTaskWrapper(void* context);
+  EventHandler const& event_handler;
+
+  std::optional<Event> ExtractData(
+      std::array<uint8_t, PACKET_LENGTH> const& raw_packet);
+
+  static void Init();
+
+  float GetScaledResistance(ResistanceReading const& raw_resistance);
+  void ResistanceCal();
+  void TxTask();
+  void RxTask();
 };
 
 #endif
