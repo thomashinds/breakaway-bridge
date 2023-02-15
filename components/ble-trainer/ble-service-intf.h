@@ -3,7 +3,7 @@
 
 class BLEServiceIntf {
 public:
-    
+
 
 
 };

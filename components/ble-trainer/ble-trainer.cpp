@@ -9,6 +9,7 @@
 #include "NimBLECharacteristic.h"
 #include "NimBLEDevice.h"
 #include "NimBLEUUID.h"
+#include "esp_log.h"
 
 // todo implement these
 // Device Info
@@ -62,9 +63,8 @@ class MyCallbacks : public NimBLECharacteristicCallbacks {
   void onNotify(NimBLECharacteristic* /* pCharacteristic */) final {
     ESP_LOGI("BLE", "Notify %s", name.c_str());
   }
-  void onStatus(NimBLECharacteristic* /* pCharacteristic */,
-                int /* code */) final {
-    ESP_LOGI("BLE", "Status %s", name.c_str());
+  void onStatus(NimBLECharacteristic* /* pCharacteristic */, int code) final {
+    ESP_LOGI("BLE", "Status %s: [%d]", name.c_str(), code);
   }
   void onSubscribe(NimBLECharacteristic* /*pCharacteristic*/,
                    NimBLEConnInfo& /*connInfo*/,
@@ -84,6 +84,11 @@ void BLETrainer::Init() {
 
   // Create the BLE Server
   this->gatt_server = NimBLEDevice::createServer();
+
+  // TODO make class member
+  static NimBLEServerCallbacks callbacks;
+  esp_log_level_set("NimBLEServerCallbacks", ESP_LOG_DEBUG);
+  this->gatt_server->setCallbacks(&callbacks);
 
   //
   // Create the Device Info BLE service
@@ -160,7 +165,7 @@ void BLETrainer::Init() {
 
   // Crank revolution data supported (cadence) and Wheel revolution data
   // supported (speed)
-  this->csc_characteristic_feature->setValue(static_cast<uint8_t>(0b011));
+  this->csc_characteristic_feature->setValue(static_cast<uint16_t>(0b011));
 
   this->device_info_service->start();
   this->cps_service->start();

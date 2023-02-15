@@ -47,7 +47,7 @@ bool EventHandler::SubmitEvent(Event event) const {
 
 void EventHandler::Task(void *context) {
   if (context != nullptr) {
-    EventHandler *event_handler = reinterpret_cast<EventHandler *>(context);
+    auto *event_handler = reinterpret_cast<EventHandler *>(context);
 
     event_handler->ble_trainer
         .Init();  // todo Should be done in the same task context as everything
