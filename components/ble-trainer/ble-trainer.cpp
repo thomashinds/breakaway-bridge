@@ -29,9 +29,9 @@ constexpr uint16_t CPS_FEATURE_UUID = 0x2A65;
 constexpr uint16_t CPS_SENSOR_LOC_UUID = 0x2A5D;
 
 // Cycling Speed and Cadence Service
-constexpr uint16_t CSC_SERVICE_UUID{0x1816};
-constexpr uint16_t CSC_CHARACTERISTIC_MEASUREMENT{0x2A5B};
-constexpr uint16_t CSC_CHARACTERISTIC_FEATURE{0x2A5C};
+// constexpr uint16_t CSC_SERVICE_UUID{0x1816};
+// constexpr uint16_t CSC_CHARACTERISTIC_MEASUREMENT{0x2A5B};
+// constexpr uint16_t CSC_CHARACTERISTIC_FEATURE{0x2A5C};
 
 BLETrainer::BLETrainer()
     : gatt_server{nullptr},
@@ -150,34 +150,34 @@ void BLETrainer::Init() {
   //
   // Create Cycling Speed and Cadence BLE Service
   //
-  this->csc_service = gatt_server->createService(CSC_SERVICE_UUID);
+  // this->csc_service = gatt_server->createService(CSC_SERVICE_UUID);
 
-  this->csc_characteristic_measurement =
-      this->csc_service->createCharacteristic(
-          NimBLEUUID(CSC_CHARACTERISTIC_MEASUREMENT), NIMBLE_PROPERTY::NOTIFY);
+  // this->csc_characteristic_measurement =
+  //     this->csc_service->createCharacteristic(
+  //         NimBLEUUID(CSC_CHARACTERISTIC_MEASUREMENT), NIMBLE_PROPERTY::NOTIFY);
 
-  static MyCallbacks csc_measurement_callbacks("CSC Measurement");
-  this->csc_characteristic_measurement->setCallbacks(
-      &csc_measurement_callbacks);
+  // static MyCallbacks csc_measurement_callbacks("CSC Measurement");
+  // this->csc_characteristic_measurement->setCallbacks(
+  //     &csc_measurement_callbacks);
 
-  this->csc_characteristic_feature = this->csc_service->createCharacteristic(
-      NimBLEUUID(CSC_CHARACTERISTIC_FEATURE), NIMBLE_PROPERTY::READ);
+  // this->csc_characteristic_feature = this->csc_service->createCharacteristic(
+  //     NimBLEUUID(CSC_CHARACTERISTIC_FEATURE), NIMBLE_PROPERTY::READ);
 
-  // Crank revolution data supported (cadence) and Wheel revolution data
-  // supported (speed)
-  this->csc_characteristic_feature->setValue(static_cast<uint16_t>(0b011));
+  // // Crank revolution data supported (cadence) and Wheel revolution data
+  // // supported (speed)
+  // this->csc_characteristic_feature->setValue(static_cast<uint16_t>(0b011));
 
   this->device_info_service->start();
   this->cps_service->start();
-  this->csc_service->start();
+  // this->csc_service->start();
 
   // Start advertising
   NimBLEAdvertising* advertising = NimBLEDevice::getAdvertising();
   static_assert(1157 == 0x485);
   advertising->setAppearance(1157);
-  advertising->addServiceUUID(CPS_UUID);
-  advertising->addServiceUUID(CSC_SERVICE_UUID);
   advertising->addServiceUUID(DEVICE_INFO_UUID);
+  advertising->addServiceUUID(CPS_UUID);
+  // advertising->addServiceUUID(CSC_SERVICE_UUID);
   advertising->setScanResponse(true);
 
   NimBLEDevice::startAdvertising();
@@ -280,6 +280,6 @@ void BLETrainer::notify_cadence(const uint16_t cadence_rpm) {
                            this->stored_crank_revolutions,
                            this->stored_crank_event_time};
 
-  this->csc_characteristic_measurement->setValue(payload);
-  this->csc_characteristic_measurement->notify();
+  // this->csc_characteristic_measurement->setValue(payload);
+  // this->csc_characteristic_measurement->notify();
 }

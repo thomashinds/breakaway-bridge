@@ -34,9 +34,9 @@ class BLETrainer {
   NimBLECharacteristic *cps_measurement_characteristic;
 
   // Cycling Speed and Cadence
-  NimBLEService *csc_service;
-  NimBLECharacteristic *csc_characteristic_measurement;
-  NimBLECharacteristic *csc_characteristic_feature;
+  // NimBLEService *csc_service;
+  // NimBLECharacteristic *csc_characteristic_measurement;
+  // NimBLECharacteristic *csc_characteristic_feature;
 
   // Adapter state data
   uint16_t stored_crank_revolutions;

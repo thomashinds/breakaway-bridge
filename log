@@ -1,0 +1,339 @@
+           uuid 0x1816
+         handle 29
+     end_handle 34
+characteristic
+           uuid 0x2a5b
+     def_handle 30
+     val_handle 31
+   min_key_size 0
+          flags [NOTIFY]
+ccc descriptor
+           uuid 0x2902
+         handle 32
+   min_key_size 0
+          flags [READ|WRITE]
+characteristic
+           uuid 0x2a5c
+     def_handle 33
+     val_handle 34
+   min_key_size 0
+          flags [READ]
+I (1799) NimBLE: GAP procedure initiated: advertise; 
+I (1802) NimBLE: disc_mode=2
+I (1806) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+I (1816) NimBLE: 
+
+D (1821) NimBLEAdvertising: << Advertising start
+Waiting a client connection to notify...
+and now...
+BLE Power: -128
+I (1870) Event: Power: 200
+D (1870) NimBLECharacteristic: >> notify: length: 14
+D (1870) NimBLECharacteristic: << notify: No clients subscribed.
+I (2173) Event: Cadence: 80
+D (2174) NimBLECharacteristic: >> notify: length: 11
+D (2174) NimBLECharacteristic: << notify: No clients subscribed.
+I (2477) Event: Resistance: 44
+I (2778) Event: Power: 200
+D (2779) NimBLECharacteristic: >> notify: length: 14
+D (2779) NimBLECharacteristic: << notify: No clients subscribed.
+I (3062) Event: Cadence: 80
+D (3063) NimBLECharacteristic: >> notify: length: 11
+D (3063) NimBLECharacteristic: << notify: No clients subscribed.
+I (3367) Event: Resistance: 44
+I (3668) Event: Power: 200
+D (3669) NimBLECharacteristic: >> notify: length: 14
+D (3669) NimBLECharacteristic: << notify: No clients subscribed.
+I (3972) Event: Cadence: 80
+D (3973) NimBLECharacteristic: >> notify: length: 11
+D (3973) NimBLECharacteristic: << notify: No clients subscribed.
+I (4276) Event: Resistance: 44
+I (4577) Event: Power: 200
+D (4578) NimBLECharacteristic: >> notify: length: 14
+D (4578) NimBLECharacteristic: << notify: No clients subscribed.
+I (4881) Event: Cadence: 80
+D (4882) NimBLECharacteristic: >> notify: length: 11
+D (4882) NimBLECharacteristic: << notify: No clients subscribed.
+I (5165) Event: Resistance: 44
+I (5466) Event: Power: 200
+D (5467) NimBLECharacteristic: >> notify: length: 14
+D (5467) NimBLECharacteristic: << notify: No clients subscribed.
+I (5770) Event: Cadence: 80
+D (5771) NimBLECharacteristic: >> notify: length: 11
+D (5771) NimBLECharacteristic: << notify: No clients subscribed.
+I (6074) Event: Resistance: 44
+I (6375) Event: Power: 200
+D (6376) NimBLECharacteristic: >> notify: length: 14
+D (6376) NimBLECharacteristic: << notify: No clients subscribed.
+I (6679) Event: Cadence: 80
+D (6680) NimBLECharacteristic: >> notify: length: 11
+D (6680) NimBLECharacteristic: << notify: No clients subscribed.
+I (6963) Event: Resistance: 44
+I (7264) Event: Power: 200
+D (7265) NimBLECharacteristic: >> notify: length: 14
+D (7265) NimBLECharacteristic: << notify: No clients subscribed.
+I (7568) Event: Cadence: 80
+D (7569) NimBLECharacteristic: >> notify: length: 11
+D (7569) NimBLECharacteristic: << notify: No clients subscribed.
+I (7872) Event: Resistance: 44
+I (8173) Event: Power: 200
+D (8174) NimBLECharacteristic: >> notify: length: 14
+D (8174) NimBLECharacteristic: << notify: No clients subscribed.
+I (8477) Event: Cadence: 80
+D (8478) NimBLECharacteristic: >> notify: length: 11
+D (8478) NimBLECharacteristic: << notify: No clients subscribed.
+I (8781) Event: Resistance: 44
+I (9062) Event: Power: 200
+D (9063) NimBLECharacteristic: >> notify: length: 14
+D (9063) NimBLECharacteristic: << notify: No clients subscribed.
+I (9366) Event: Cadence: 80
+D (9367) NimBLECharacteristic: >> notify: length: 11
+D (9367) NimBLECharacteristic: << notify: No clients subscribed.
+I (9670) Event: Resistance: 44
+I (9971) Event: Power: 200
+D (9972) NimBLECharacteristic: >> notify: length: 14
+D (9972) NimBLECharacteristic: << notify: No clients subscribed.
+I (10275) Event: Cadence: 80
+D (10276) NimBLECharacteristic: >> notify: length: 11
+D (10276) NimBLECharacteristic: << notify: No clients subscribed.
+I (10579) Event: Resistance: 44
+I (10880) Event: Power: 200
+D (10881) NimBLECharacteristic: >> notify: length: 14
+D (10881) NimBLECharacteristic: << notify: No clients subscribed.
+I (11164) Event: Cadence: 80
+D (11165) NimBLECharacteristic: >> notify: length: 11
+D (11165) NimBLECharacteristic: << notify: No clients subscribed.
+I (11468) Event: Resistance: 44
+I (11769) Event: Power: 200
+D (11770) NimBLECharacteristic: >> notify: length: 14
+D (11770) NimBLECharacteristic: << notify: No clients subscribed.
+I (12073) Event: Cadence: 80
+D (12074) NimBLECharacteristic: >> notify: length: 11
+D (12074) NimBLECharacteristic: << notify: No clients subscribed.
+I (12377) Event: Resistance: 44
+I (12678) Event: Power: 200
+D (12679) NimBLECharacteristic: >> notify: length: 14
+D (12679) NimBLECharacteristic: << notify: No clients subscribed.
+I (12962) Event: Cadence: 80
+D (12963) NimBLECharacteristic: >> notify: length: 11
+D (12963) NimBLECharacteristic: << notify: No clients subscribed.
+I (13266) Event: Resistance: 44
+I (13567) Event: Power: 200
+D (13568) NimBLECharacteristic: >> notify: length: 14
+D (13568) NimBLECharacteristic: << notify: No clients subscribed.
+I (13871) Event: Cadence: 80
+D (13872) NimBLECharacteristic: >> notify: length: 11
+D (13872) NimBLECharacteristic: << notify: No clients subscribed.
+I (14175) Event: Resistance: 44
+I (14476) Event: Power: 200
+D (14477) NimBLECharacteristic: >> notify: length: 14
+D (14477) NimBLECharacteristic: << notify: No clients subscribed.
+I (14780) Event: Cadence: 80
+D (14781) NimBLECharacteristic: >> notify: length: 11
+D (14781) NimBLECharacteristic: << notify: No clients subscribed.
+
+# Initial connection
+D (14875) NimBLEServer: >> handleGapEvent: 
+D (14875) NimBLEServerCallbacks: onConnect(): Default
+I (15064) Event: Resistance: 44
+D (15120) NimBLEServer: >> handleGapEvent: 
+I (15120) NimBLEServer: mtu update event; conn_handle=0 mtu=256
+D (15120) NimBLEServerCallbacks: onMTUChange(): Default
+I (15365) Event: Power: 200
+D (15366) NimBLECharacteristic: >> notify: length: 14
+D (15366) NimBLECharacteristic: << notify: No clients subscribed.
+
+# specifically don't subscribe to (device info)?
+D (15388) NimBLEServer: >> handleGapEvent: 
+I (15388) NimBLEServer: subscribe event; attr_handle=8, subscribed: false
+
+# Cadence event, nobody subscribed
+I (15669) Event: Cadence: 80
+D (15670) NimBLECharacteristic: >> notify: length: 11
+D (15670) NimBLECharacteristic: << notify: No clients subscribed.
+
+# Read info
+D (15898) NimBLECharacteristic: Characteristic 0x2a29 Read event # mfg name
+D (15899) NimBLECharacteristicCallbacks: onRead: default
+I (15973) Event: Resistance: 44
+D (16018) NimBLECharacteristic: Characteristic 0x2a24 Read event # model num
+D (16019) NimBLECharacteristicCallbacks: onRead: default
+D (16078) NimBLECharacteristic: Characteristic 0x2a25 Read event # serial num
+D (16079) NimBLECharacteristicCallbacks: onRead: default
+D (16138) NimBLECharacteristic: Characteristic 0x2a26 Read event # fw rev
+D (16139) NimBLECharacteristicCallbacks: onRead: default
+D (16228) NimBLECharacteristic: Characteristic 0x2a27 Read event # hw rev
+D (16229) NimBLECharacteristicCallbacks: onRead: default
+
+# Power event, nobody subscribed
+I (16274) Event: Power: 200
+D (16275) NimBLECharacteristic: >> notify: length: 14
+D (16275) NimBLECharacteristic: << notify: No clients subscribed.
+
+# Read CPS info
+D (16288) NimBLECharacteristic: Characteristic 0x2a65 Read event # cps feature
+D (16289) NimBLECharacteristicCallbacks: onRead: default
+D (16378) NimBLECharacteristic: Characteristic 0x2a5d Read event # cps sensor loc
+D (16379) NimBLECharacteristicCallbacks: onRead: default
+
+# Subscribe to CPS
+D (16438) NimBLEServer: >> handleGapEvent: 
+I (16438) NimBLEServer: subscribe event; attr_handle=27, subscribed: true
+I (16439) NimBLECharacteristic: New subscribe value for conn: 0 val: 1
+I (16446) BLE: Subscribe CPS Measurement
+
+# cadence event, nobody subscribed
+I (16578) Event: Cadence: 80
+D (16579) NimBLECharacteristic: >> notify: length: 11
+D (16579) NimBLECharacteristic: << notify: No clients subscribed.
+
+# Subscribe to CSC
+D (16588) NimBLEServer: >> handleGapEvent: 
+I (16588) NimBLEServer: subscribe event; attr_handle=31, subscribed: true
+I (16594) NimBLECharacteristic: New subscribe value for conn: 0 val: 1
+I (16601) BLE: Subscribe CSC Measurement
+
+# Read CSC info
+D (16648) NimBLECharacteristic: Characteristic 0x2a5c Read event # csc feature
+D (16649) NimBLECharacteristicCallbacks: onRead: default
+
+# Read info (interrupted by resistance event)
+D (16708) NimBLECharacteristic: Characteristic 0x2a29 Read event # mfg name
+D (16709) NimBLECharacteristicCallbacks: onRead: default
+D (16828) NimBLECharacteristic: Characteristic 0x2a24 Read event # model num
+D (16829) NimBLECharacteristicCallbacks: onRead: default
+
+I (16862) Event: Resistance: 44
+
+D (16918) NimBLECharacteristic: Characteristic 0x2a25 Read event # serial num
+D (16919) NimBLECharacteristicCallbacks: onRead: default
+D (16978) NimBLECharacteristic: Characteristic 0x2a26 Read event # fw rev
+D (16979) NimBLECharacteristicCallbacks: onRead: default
+D (17068) NimBLECharacteristic: Characteristic 0x2a27 Read event # hw rev
+D (17069) NimBLECharacteristicCallbacks: onRead: default
+
+# Notify power
+I (17163) Event: Power: 200
+D (17164) NimBLECharacteristic: >> notify: length: 14
+I (17164) BLE: Notify CPS Measurement
+I (17165) NimBLE: GATT procedure initiated: notify; 
+I (17171) NimBLE: att_handle=27
+D (17177) NimBLEServer: >> handleGapEvent: 
+I (17179) BLE: Status CPS Measurement: [0] # tx complete?
+D (17184) NimBLECharacteristic: << notify
+
+# read info
+D (17188) NimBLECharacteristic: Characteristic 0x2a29 Read event # mfg
+D (17194) NimBLECharacteristicCallbacks: onRead: default
+D (17248) NimBLECharacteristic: Characteristic 0x2a24 Read event # model num
+D (17249) NimBLECharacteristicCallbacks: onRead: default
+D (17308) NimBLECharacteristic: Characteristic 0x2a25 Read event # serial
+D (17309) NimBLECharacteristicCallbacks: onRead: default
+D (17398) NimBLECharacteristic: Characteristic 0x2a26 Read event # fw rev
+D (17399) NimBLECharacteristicCallbacks: onRead: default
+
+# notify cadence
+I (17469) Event: Cadence: 80
+D (17470) NimBLECharacteristic: >> notify: length: 11
+I (17470) BLE: Notify CSC Measurement
+I (17471) NimBLE: GATT procedure initiated: notify; 
+I (17477) NimBLE: att_handle=31
+D (17483) NimBLEServer: >> handleGapEvent: 
+I (17485) BLE: Status CSC Measurement: [0]
+D (17490) NimBLECharacteristic: << notify
+
+# read info still
+D (17518) NimBLECharacteristic: Characteristic 0x2a27 Read event # hw rev
+D (17519) NimBLECharacteristicCallbacks: onRead: default
+
+# resistanace event
+I (17774) Event: Resistance: 44
+
+# power event
+I (18075) Event: Power: 200
+D (18076) NimBLECharacteristic: >> notify: length: 14
+I (18076) BLE: Notify CPS Measurement
+I (18077) NimBLE: GATT procedure initiated: notify; 
+I (18083) NimBLE: att_handle=27
+D (18087) NimBLEServer: >> handleGapEvent: 
+I (18091) BLE: Status CPS Measurement: [0]
+D (18096) NimBLECharacteristic: << notify
+
+# Cadence event
+I (18380) Event: Cadence: 80
+D (18381) NimBLECharacteristic: >> notify: length: 11
+I (18381) BLE: Notify CSC Measurement
+I (18382) NimBLE: GATT procedure initiated: notify; 
+I (18388) NimBLE: att_handle=31
+D (18394) NimBLEServer: >> handleGapEvent: 
+I (18396) BLE: Status CSC Measurement: [0]
+D (18401) NimBLECharacteristic: << notify
+
+I (18665) Event: Resistance: 44
+
+# Power event
+I (18966) Event: Power: 200
+D (18967) NimBLECharacteristic: >> notify: length: 14
+I (18967) BLE: Notify CPS Measurement
+I (18968) NimBLE: GATT procedure initiated: notify; 
+I (18974) NimBLE: att_handle=27
+D (18980) NimBLEServer: >> handleGapEvent: 
+I (18982) BLE: Status CPS Measurement: [0]
+D (18987) NimBLECharacteristic: << notify
+
+# unsub (device info?)
+D (19048) NimBLEServer: >> handleGapEvent: 
+I (19048) NimBLEServer: subscribe event; attr_handle=8, subscribed: false
+
+# unsub power?
+D (19049) NimBLEServer: >> handleGapEvent: 
+I (19053) NimBLEServer: subscribe event; attr_handle=27, subscribed: false
+I (19060) NimBLECharacteristic: New subscribe value for conn: 0 val: 0
+I (19068) BLE: Subscribe CPS Measurement
+
+# unsub CSC?
+D (19072) NimBLEServer: >> handleGapEvent: 
+I (19076) NimBLEServer: subscribe event; attr_handle=31, subscribed: false
+I (19084) NimBLECharacteristic: New subscribe value for conn: 0 val: 0
+I (19091) BLE: Subscribe CSC Measurement
+
+# Disconnect
+D (19096) NimBLEServer: >> handleGapEvent: 
+D (19100) NimBLEServerCallbacks: onDisconnect(): Default
+
+# Start advertising
+D (19105) NimBLEAdvertising: >> Advertising start: customAdvData: 0, customScanResponseData: 0
+I (19114) NimBLE: GAP procedure initiated: advertise; 
+I (19120) NimBLE: disc_mode=2
+I (19124) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+I (19134) NimBLE: 
+
+D (19141) NimBLEAdvertising: << Advertising start
+I (19274) Event: Cadence: 80
+D (19275) NimBLECharacteristic: >> notify: length: 11
+D (19275) NimBLECharacteristic: << notify: No clients subscribed.
+I (19578) Event: Resistance: 44
+I (19879) Event: Power: 200
+D (19880) NimBLECharacteristic: >> notify: length: 14
+D (19880) NimBLECharacteristic: << notify: No clients subscribed.
+I (20163) Event: Cadence: 80
+D (20164) NimBLECharacteristic: >> notify: length: 11
+D (20164) NimBLECharacteristic: << notify: No clients subscribed.
+I (20467) Event: Resistance: 44
+I (20768) Event: Power: 200
+D (20769) NimBLECharacteristic: >> notify: length: 14
+D (20769) NimBLECharacteristic: << notify: No clients subscribed.
+I (21072) Event: Cadence: 80
+D (21073) NimBLECharacteristic: >> notify: length: 11
+D (21073) NimBLECharacteristic: << notify: No clients subscribed.
+I (21376) Event: Resistance: 44
+I (21677) Event: Power: 200
+D (21678) NimBLECharacteristic: >> notify: length: 14
+D (21678) NimBLECharacteristic: << notify: No clients subscribed.
+I (21981) Event: Cadence: 80
+D (21982) NimBLECharacteristic: >> notify: length: 11
+D (21982) NimBLECharacteristic: << notify: No clients subscribed.
+I (22265) Event: Resistance: 44
+I (22566) Event: Power: 200
+D (22567) NimBLECharacteristic: >> notify: length: 14
+D (22567) NimBLECharacteristic: << notify: No clients subscribed.

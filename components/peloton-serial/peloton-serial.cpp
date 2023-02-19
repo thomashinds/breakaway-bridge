@@ -224,7 +224,7 @@ void PelotonSerial::TxTask() {
                  bytes_written);
       }
       // Wait before running again
-      vTaskDelay(pdMS_TO_TICKS(100));
+      vTaskDelay(pdMS_TO_TICKS(50));
     }
   }
 }

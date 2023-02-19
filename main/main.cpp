@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "ble-trainer.h"
+#include "esp_log.h"
 #include "event-handler.h"
 #include "peloton-serial.h"
 
@@ -10,6 +11,8 @@ extern "C" void app_main(void) {
   static BLETrainer ble_trainer;
   static const EventHandler event_handler(ble_trainer);
   static const PelotonSerial peloton_serial(event_handler);
+
+  esp_log_level_set("*", ESP_LOG_WARN);
 
   vTaskDelay(pdMS_TO_TICKS(1000));
 
