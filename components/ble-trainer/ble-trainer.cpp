@@ -1,6 +1,7 @@
 #include "ble-trainer.h"
 
 #include <sys/_stdint.h>
+#include <sys/types.h>
 
 #include <cmath>
 #include <cstdio>
@@ -10,6 +11,7 @@
 #include "NimBLEDevice.h"
 #include "NimBLEUUID.h"
 #include "esp_log.h"
+#include "esp_timer.h"
 
 // todo implement these
 // Device Info
@@ -40,8 +42,8 @@ BLETrainer::BLETrainer()
       cps_measurement_characteristic{nullptr},
       stored_crank_revolutions{0},
       stored_crank_event_time{0},
-      stored_wheel_revolutions{0},
-      stored_wheel_event_time{0} {
+      total_mm_travelled{0},
+      last_ms_stored{0} {
   //   cps_measurement_callbacks{CPSMeasurementCallbacks(*this)} {
   // xTaskCreateStatic(this->Task, "BLETrainer", this->STACK_SIZE, this,
   // tskIDLE_PRIORITY + 5,
@@ -154,7 +156,8 @@ void BLETrainer::Init() {
 
   // this->csc_characteristic_measurement =
   //     this->csc_service->createCharacteristic(
-  //         NimBLEUUID(CSC_CHARACTERISTIC_MEASUREMENT), NIMBLE_PROPERTY::NOTIFY);
+  //         NimBLEUUID(CSC_CHARACTERISTIC_MEASUREMENT),
+  //         NIMBLE_PROPERTY::NOTIFY);
 
   // static MyCallbacks csc_measurement_callbacks("CSC Measurement");
   // this->csc_characteristic_measurement->setCallbacks(
@@ -214,37 +217,62 @@ float get_speed(const int16_t power_watts) {
 }
 static float last_speed{0};
 
+constexpr uint32_t ms_to_2048th_sec(uint32_t time_ms) {
+  return static_cast<uint32_t>(static_cast<float>(time_ms) *
+                               static_cast<float>(2048.0 / 1000.0));
+}
+// Unit test
+static_assert(ms_to_2048th_sec(1000) == 2048);
+
 // todo put this in a different context?
 void BLETrainer::notify_power(const int16_t power_watts) {
   const float speed = get_speed(power_watts);
   last_speed = speed;
 
   // Assume a 700x32c tire (circumfrence 2155mm)
-  const float circumference = 2155;
+  const uint32_t circumference = 2155;
   const float mm_per_mile = 1609344;
-  const float min_per_hour = 60;
+  const float ms_per_hour = 60 * 60 * 1000;
   const float speed_mph = last_speed;
-  const float speed_rpm =
-      speed_mph * mm_per_mile / circumference / min_per_hour;
-  if (last_speed != 0) {
-    this->stored_wheel_revolutions++;
+  // const float speed_rpm =
+  //     speed_mph * mm_per_mile / circumference / min_per_hour;
 
-    const uint16_t time_diff = (60 * 1024) / speed_rpm;
-    this->stored_wheel_event_time += time_diff;
-    ESP_LOGV("BLESpeed", "%f mph, diff=%d\n", speed_mph, time_diff);
-  }
+  const uint32_t current_ms = esp_timer_get_time() / 1000;
+  const uint32_t time_delta = current_ms - last_ms_stored;
+  const float speed_mm_per_ms = (speed_mph * mm_per_mile) / ms_per_hour;
+  const uint32_t mm_travelled =
+      static_cast<uint32_t>(speed_mm_per_ms * static_cast<float>(time_delta));
+
+
+  this->total_mm_travelled += mm_travelled;
+  this->last_ms_stored = current_ms;
 
   static constexpr uint16_t flags =
       1 << 4 | 1 << 5;  // Speed and Cadence present
 
   // Unit conversion
-  const uint16_t stored_wheel_event_time_2048ths =
-      this->stored_wheel_event_time * 2;
+
+  // Looking for the floor here
+  const uint32_t wheel_revolutions = total_mm_travelled / circumference;
+
+  const uint32_t extra_mm =
+      total_mm_travelled - (wheel_revolutions * circumference);
+  const uint32_t extra_time_ms =
+      static_cast<uint32_t>(static_cast<float>(extra_mm) / speed_mm_per_ms);
+
+  // ESP_LOGE("CONV", "After the last wheel rotation completed, travelled %lu more mm in %lu more ms", extra_mm, extra_time_ms);
+
+  const uint16_t wheel_event_time_2048ths = static_cast<uint16_t>(
+      ms_to_2048th_sec(this->last_ms_stored - extra_time_ms));
+
+  this->stored_wheel_revolutions = wheel_revolutions;
+  this->stored_wheel_event_time_2048ths = wheel_event_time_2048ths;
+
 
   const CPSPayload payload{flags,
                            power_watts,
-                           this->stored_wheel_revolutions,
-                           stored_wheel_event_time_2048ths,
+                           wheel_revolutions,
+                           wheel_event_time_2048ths,
                            this->stored_crank_revolutions,
                            this->stored_crank_event_time};
 
@@ -274,11 +302,14 @@ void BLETrainer::notify_cadence(const uint16_t cadence_rpm) {
     ESP_LOGV("BLECadence", "%d rpm, diff=%d\n", cadence_rpm, time_diff);
   }
 
-  const CSCPayload payload{flags,
-                           this->stored_wheel_revolutions,
-                           this->stored_wheel_event_time,
-                           this->stored_crank_revolutions,
-                           this->stored_crank_event_time};
+
+  // Not actually sure if this is correct
+  const CSCPayload payload{
+      flags,
+      this->stored_wheel_revolutions,
+      static_cast<uint16_t>(this->stored_wheel_event_time_2048ths / 2),
+      this->stored_crank_revolutions,
+      this->stored_crank_event_time};
 
   // this->csc_characteristic_measurement->setValue(payload);
   // this->csc_characteristic_measurement->notify();

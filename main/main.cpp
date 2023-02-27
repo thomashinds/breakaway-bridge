@@ -18,10 +18,10 @@ extern "C" void app_main(void) {
 
   while (true) {
     // event_handler.SubmitEvent(PowerReading{200});
-    // vTaskDelay(pdMS_TO_TICKS(300));
+    // vTaskDelay(pdMS_TO_TICKS(60));
     // event_handler.SubmitEvent(CadenceReading{80});
-    // vTaskDelay(pdMS_TO_TICKS(300));
+    // vTaskDelay(pdMS_TO_TICKS(60));
     // event_handler.SubmitEvent(ResistanceReading{44});
-    vTaskDelay(pdMS_TO_TICKS(300));
+    vTaskDelay(pdMS_TO_TICKS(600));
   }
 }
