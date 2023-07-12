@@ -6,7 +6,8 @@ CompileFlags:
       -fstrict-volatile-bitfields,
     ]
   Add: [
-    "--sysroot=/Users/thomas/.espressif/tools/xtensa-esp32-elf/esp-2022r1-11.2.0"
+    "--sysroot=/Users/thomas/.espressif/tools/xtensa-esp32-elf/esp-2022r1-11.2.0",
+    "-Wno-format"
   ]
 
 Diagnostics:

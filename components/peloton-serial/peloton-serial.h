@@ -6,6 +6,10 @@
 #include "event-handler.h"
 #include "freertos/FreeRTOS.h"
 
+// Handler for serial communication with the Peloton Bike
+// Periodically queries the speed, power, and resistance from the bike
+// Also handles decoding the packet contents and passing the values on to the
+// provided EventHandler
 class PelotonSerial {
  public:
   PelotonSerial(EventHandler const& event_handler);
@@ -16,11 +20,11 @@ class PelotonSerial {
   bool is_calibrated;
 
   StaticTask_t tx_task_storage;
-  static constexpr size_t TX_STACK_SIZE{4096};  // todo shrink once ble moves
+  static constexpr size_t TX_STACK_SIZE{4096};
   std::array<StackType_t, TX_STACK_SIZE> tx_task_stack{};
 
   StaticTask_t rx_task_storage;
-  static constexpr size_t RX_STACK_SIZE{4096};  // todo shrink once ble moves
+  static constexpr size_t RX_STACK_SIZE{4096};
   std::array<StackType_t, RX_STACK_SIZE> rx_task_stack{};
 
   static constexpr size_t PACKET_LENGTH{10};

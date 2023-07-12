@@ -22,6 +22,8 @@ struct ResistanceReading {
 
 using Event = std::variant<PowerReading, CadenceReading, ResistanceReading>;
 
+// Visitor for the Event std::variant type - calls the appropriate BLETrainer
+// method for the corresponding event.
 class EventDispatch {
  public:
   EventDispatch(BLETrainer &ble_trainer) : ble_trainer{ble_trainer} {}
@@ -44,7 +46,7 @@ class EventHandler {
  private:
   // FreeRTOS trask
   StaticTask_t task_storage;
-  static constexpr size_t STACK_SIZE{8192};  // todo shrink once ble moves
+  static constexpr size_t STACK_SIZE{8192};
   StackType_t task_stack[STACK_SIZE];
 
   // FreeRTOS queue
